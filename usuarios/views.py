@@ -12,11 +12,16 @@ def cadastro(request):
         confirmar_senha = request.POST.get('confirmar_senha')
         
         if confirmar_senha != senha:
-            print('Erro 2')
+            print('Erro 2 - as senhas devem ser iguais')
             return redirect('/usuarios/cadastro')
         
         if len(senha) < 6:
             print('Erro 3 - senha menor que 6 digitos')
+            return redirect('/usuarios/cadastro')
+        
+        users = User.objects.filter(username=username)
+        if users.exists():
+            print('Erro 1 - Usuário já possui cadastro')
             return redirect('/usuarios/cadastro')
 
         user = User.objects.create_user(
