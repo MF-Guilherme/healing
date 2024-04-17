@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.messages import constants
+from django.contrib import messages
 
 def cadastro(request):
     if request.method == 'GET':
@@ -11,18 +13,20 @@ def cadastro(request):
         senha = request.POST.get('senha')
         confirmar_senha = request.POST.get('confirmar_senha')
         
+        users = User.objects.filter(username=username)
+        
+        if users.exists():
+            messages.add_message(request, constants.ERROR, "Já existe um usuário com este username")
+            return redirect('/usuarios/cadastro')
+
         if confirmar_senha != senha:
-            print('Erro 2 - as senhas devem ser iguais')
+            messages.add_message(request, constants.ERROR, "A senha e o confirmar senha devem ser iguais")
             return redirect('/usuarios/cadastro')
         
         if len(senha) < 6:
-            print('Erro 3 - senha menor que 6 digitos')
+            messages.add_message(request, constants.ERROR, "A senha deve ter mais de 6 dígitos")
             return redirect('/usuarios/cadastro')
         
-        users = User.objects.filter(username=username)
-        if users.exists():
-            print('Erro 1 - Usuário já possui cadastro')
-            return redirect('/usuarios/cadastro')
 
         user = User.objects.create_user(
             username=username,
@@ -30,4 +34,4 @@ def cadastro(request):
             password=senha
         )
 
-        return HttpResponse(f'Usuario criado com sucesso')
+        return redirect('/usuarios/login')
