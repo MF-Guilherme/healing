@@ -39,6 +39,7 @@ def cadastro(request):
 
 def login_view(request):
     if request.method == 'GET':
+        print(request.user)
         return render(request, 'login.html')
     elif request.method == 'POST':
         username = request.POST.get('username')
@@ -52,3 +53,8 @@ def login_view(request):
 
         messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos')
         return redirect('/usuarios/login')
+    
+
+def sair(request):
+    auth.logout(request)
+    return redirect('/usuarios/login')
