@@ -16,3 +16,4 @@ def home(request):
         
         especialidades = Especialidade.objects.all()
         return render(request, 'home.html', {'medicos': medicos, 'especialidades': especialidades})
+    
