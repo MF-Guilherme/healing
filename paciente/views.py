@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from medico.models import DadosMedico, Especialidade, DatasAbertas
 from django.http import HttpResponse
 from datetime import datetime
+from .models import Consulta
+from django.contrib import messages
+from django.contrib.messages import constants
+
 
 def home(request):
     if request.method == 'GET':
@@ -24,3 +28,22 @@ def escolher_horario(request, id_dados_medicos):
         medico = DadosMedico.objects.get(id=id_dados_medicos)
         datas_abertas = DatasAbertas.objects.filter(user=medico.user).filter(data__gte=datetime.now()).filter(agendado=False)
         return render(request, 'escolher_horario.html', {'medico': medico, 'datas_abertas': datas_abertas})
+
+
+def agendar_horario(request, id_data_aberta):
+    if request.method == 'GET':
+        data_aberta = DatasAbertas.objects.get(id=id_data_aberta)
+
+        horario_agendado = Consulta(
+            paciente=request.user,
+            data_aberta=data_aberta
+        )
+
+        horario_agendado.save()
+        
+        data_aberta.agendado = True
+        data_aberta.save()
+
+        messages.add_message(request, constants.SUCCESS, 'Consulta agendada com sucesso.')
+        
+        return redirect('/pacientes/minhas_consultas/') # Por enquanto dando erro pq falta criar essa página.
