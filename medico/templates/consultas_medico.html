@@ -16,6 +16,14 @@
 
     <div class="container">
         <br>
+        {% if messages %}
+            <br>
+            {% for message in messages %}
+                <section class="alert {{message.tags}}">
+                    {{message}}
+                </section>
+            {% endfor %}
+        {% endif %}
         <h2><span class="color-dark">Suas consultas</span></h2>
 
         <div class="row">
@@ -33,20 +41,47 @@
         </div>
 
         <br>
-
+        
+        <h2><span class="color-dark">Hoje</span></h2>
         <div class="list-minhas-consultas">
             <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col">Médico</th>
+                    <th scope="col">Paciente</th>
                     <th scope="col">Status</th>
                     <th scope="col">Data</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for consulta in minhas_consultas %}
+                    {% for consulta in consultas_hoje  %}
                         <tr>
-                            <td><a href="{% url "consulta" consulta.id %}">Dr(a). {{consulta.data_aberta.user}}</a></td>
+                            <td><a href="">{{consulta.paciente}}</a></td>
+                            <td>{{consulta.get_status_display}}</td>
+                            <td>{{consulta.data_aberta.data}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+
+        </div>
+
+        <hr>
+        
+
+        <h2><span class="color-dark">Restantes</span></h2>
+        <div class="list-minhas-consultas">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Pacientes</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for consulta in consultas_restantes  %}
+                        <tr>
+                            <td><a href="">{{consulta.paciente}}</a></td>
                             <td>{{consulta.get_status_display}}</td>
                             <td>{{consulta.data_aberta.data}}</td>
                         </tr>
