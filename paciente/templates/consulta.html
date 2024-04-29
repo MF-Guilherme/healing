@@ -70,11 +70,12 @@
                 <hr>
                 <h3 class="p-bold">Meus documentos</h3>
                 <br>
-    
-                <br>
-                <br>
-                <br>
-                <br>
+                {% for documento in documentos %}
+                    <a target="blank" href="{{documento.documento.url}}" class="link documentos"><i class="bi bi-file-arrow-down"></i> {{documento.titulo}} - {{documento.consulta.data_aberta.data.year}}</a>
+                    <br>
+                    <br>
+                    <br>
+                {% endfor %}
             </div>
             <div class="col-md"></div>
         </div>
