@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages import constants
 from django.contrib import messages, auth
 
+
 def cadastro(request):
     if request.method == 'GET':
         return render(request, 'cadastro.html')
@@ -39,7 +40,6 @@ def cadastro(request):
 
 def login_view(request):
     if request.method == 'GET':
-        print(request.user)
         return render(request, 'login.html')
     elif request.method == 'POST':
         username = request.POST.get('username')
