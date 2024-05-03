@@ -53,7 +53,7 @@
                     <p><i class="bi bi-map icon-main"></i>&nbsp&nbsp{{ medico.rua }}, {{ medico.numero }}.</p>
                     <p><i class="bi bi-calendar2-week icon-main"></i>&nbsp&nbspProxima data: 
                         {% if medico.proxima_data %}
-                            {{medico.proxima_data}}
+                            {{medico.proxima_data.data}}
                         {% else %}
                             Aguarde uma próxima data
                         {% endif %}
