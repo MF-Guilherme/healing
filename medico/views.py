@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from .models import Especialidade, DadosMedico, is_medico, DatasAbertas
-from paciente.models import Consulta, Documento
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.messages import constants
 from datetime import datetime, timedelta
+from paciente.models import Consulta, Documento
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 @login_required
 def cadastro_medico(request):
@@ -155,3 +156,21 @@ def add_documento(request, id_consulta):
     documento.save()
     messages.add_message(request, constants.SUCCESS, 'Documento enviado com sucesso!')
     return redirect(f'/medicos/consulta_area_medico/{id_consulta}')
+
+
+@login_required
+def dashboard(request):
+    if not is_medico(request.user):
+        messages.add_message(request, constants.WARNING, 'Somente médicos podem acessar esta página')
+        return redirect('/usuarios/sair')
+    
+    consultas = Consulta.objects.filter(data_aberta__user=request.user) \
+    .filter(data_aberta__data__range=[datetime.now().date() - timedelta(days=7), datetime.now().date() + timedelta(days=1)]) \
+    .annotate(data_trunc=TruncDate('data_aberta__data')) \
+    .values('data_trunc') \
+    .annotate(quantidade=Count('id'))
+
+    datas = [i['data_trunc'].strftime("%d-%m-%Y") for i in consultas]
+    quantidade = [i['quantidade'] for i in consultas]
+
+    return render(request, 'dashboard.html', {'datas': datas, 'quantidade': quantidade})
