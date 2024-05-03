@@ -82,4 +82,16 @@ def consulta(request, id_consulta):
         dado_medico = DadosMedico.objects.get(user=consulta.data_aberta.user)
         documentos = Documento.objects.filter(consulta=consulta)
         return render(request, 'consulta.html', {'consulta': consulta, 'dado_medico': dado_medico, 'documentos': documentos})
-    
+
+
+@login_required
+def cancelar_consulta(request, id_consulta):
+    consulta = Consulta.objects.get(id=id_consulta)
+    if request.user != consulta.paciente:
+        messages.add_message(request, constants.ERROR, 'Essa consulta não é sua!')
+        return redirect('/pacientes/home')
+
+    consulta.status = 'C'
+    consulta.save()
+    messages.add_message(request, constants.SUCCESS, 'Consulta cancelada com sucesso')
+    return redirect(f'/pacientes/consulta/{id_consulta}')
